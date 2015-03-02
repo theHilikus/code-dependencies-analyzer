@@ -20,6 +20,8 @@ import org.testng.annotations.Test;
 public class FileFinderTest {
     private FileFinder testingUnit;
 
+    private static final Path TESTING_DIR = Paths.get("target", "test-classes", "files-test").toAbsolutePath();
+
     /**
      * Configures the unit tests
      */
@@ -35,16 +37,15 @@ public class FileFinderTest {
      */
     @Test
     public void testFindingFiles() throws IOException {
-	Path workingDir = Paths.get("target", "test-classes", "files-test").toAbsolutePath();
-	Files.walkFileTree(workingDir, testingUnit);
+	Files.walkFileTree(TESTING_DIR, testingUnit);
 
 	List<Path> result = testingUnit.getMatchingFiles();
 	assertEquals(result.size(), 3);
 	Path file1 = Paths.get("file1.java");
 	Path file3 = Paths.get("subdir", "file3.java");
-	assertTrue(result.contains(workingDir.resolve(file1)));
-	assertTrue(result.contains(workingDir.resolve(file3)));
-	
+	assertTrue(result.contains(TESTING_DIR.resolve(file1)));
+	assertTrue(result.contains(TESTING_DIR.resolve(file3)));
+
     }
 
 }

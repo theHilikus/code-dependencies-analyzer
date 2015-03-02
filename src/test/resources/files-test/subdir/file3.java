@@ -3,6 +3,6 @@ this
 is
   a
   test
-  import file3.1
+  import 3.1;
 other    garbage
-import     3.2   
+import     3.2;   
