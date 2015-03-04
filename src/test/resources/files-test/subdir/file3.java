@@ -1,3 +1,4 @@
+package a.b;
 hello
 this
 is
@@ -5,4 +6,8 @@ is
   test
   import 3.1;
 other    garbage
-import     3.2;   
+import     3.2.hello.world;
+
+   private class MyPrivateClass {
+       
+   }

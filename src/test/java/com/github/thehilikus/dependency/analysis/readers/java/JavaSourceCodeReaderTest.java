@@ -1,19 +1,17 @@
 package com.github.thehilikus.dependency.analysis.readers.java;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.github.thehilikus.dependency.analysis.api.Dependency;
-import com.github.thehilikus.dependency.analysis.core.BasicDependency;
 
 /**
  * Tests JavaSourceCodeReader
@@ -41,23 +39,30 @@ public class JavaSourceCodeReaderTest {
      */
     @Test
     public void testGetDependencies() {
-	Set<Dependency> result = testingUnit.getDependencies();
+	Map<String, Set<String>> result = testingUnit.getDependencies();
 
-	assertEquals(result.size(), 5);
+	assertEquals(result.size(), 2);
 
-	Set<Dependency> expected = createExpectedSet();
+	Map<String, Set<String>> expected = createExpectedMap();
 
-	assertTrue(result.containsAll(expected));
+	assertEquals(result.get("com.github.thehilikus.blah"), expected.get("com.github.thehilikus.blah"));
+	assertEquals(result.get("a.b.MyPrivateClass"), expected.get("a.b.MyPrivateClass"));
+
     }
 
-    private static Set<Dependency> createExpectedSet() {
-	Set<Dependency> expected = new HashSet<>();
-	expected.add(new BasicDependency("1.1"));
-	expected.add(new BasicDependency("1.2"));
-	expected.add(new BasicDependency("1.3"));
+    private static Map<String, Set<String>> createExpectedMap() {
+	Map<String, Set<String>> result = new HashMap<>();
+	Set<String> expectedOne = new HashSet<>();
+	expectedOne.add("1.1");
+	expectedOne.add("1.2");
+	expectedOne.add("1.3");
+	result.put("com.github.thehilikus.blah", expectedOne);
 
-	expected.add(new BasicDependency("3.1"));
-	expected.add(new BasicDependency("3.2"));
-	return expected;
+	Set<String> expectedThree = new HashSet<>();
+	expectedThree.add("3.1");
+	expectedThree.add("3.2.hello.world");
+	result.put("a.b.MyPrivateClass", expectedThree);
+
+	return result;
     }
 }

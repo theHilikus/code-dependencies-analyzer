@@ -1,5 +1,6 @@
 package com.github.thehilikus.dependency.analysis.api;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -12,7 +13,7 @@ public interface DependencySource {
     /**
      * @return all the valid dependencies in the source
      */
-    Set<Dependency> getDependencies();
+    Map<String, Set<String>> getDependencies();
 
     /**
      * @return a unique identifier for this source
