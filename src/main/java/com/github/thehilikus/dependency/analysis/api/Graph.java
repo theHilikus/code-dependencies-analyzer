@@ -6,7 +6,6 @@ package com.github.thehilikus.dependency.analysis.api;
  * @author hilikus
  */
 public interface Graph {
-
     /**
      * @return a unique identifier for this graph
      */
@@ -18,8 +17,11 @@ public interface Graph {
     int getNodesCount();
 
     /**
-     * @param command the operation to apply to the graph
+     * Executes an operation on the graph
+     * 
+     * @param command the operation to execute
      * @return a resulting graph after applying the operation
      */
     Graph apply(GraphOperation command);
+
 }
