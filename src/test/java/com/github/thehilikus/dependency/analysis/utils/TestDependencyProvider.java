@@ -1,4 +1,4 @@
-package com.github.thehilikus.dependency.analysis.core;
+package com.github.thehilikus.dependency.analysis.utils;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

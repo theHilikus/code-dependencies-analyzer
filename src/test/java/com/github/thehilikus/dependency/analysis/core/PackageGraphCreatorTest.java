@@ -6,6 +6,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.github.thehilikus.dependency.analysis.api.Graph;
+import com.github.thehilikus.dependency.analysis.utils.TestDependencyProvider;
 
 /**
  * Tests PackageGraphCreator
