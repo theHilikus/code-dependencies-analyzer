@@ -57,4 +57,12 @@ public class DependencyGraph implements Graph {
 	return operation.execute(name, backend);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+	return "DependencyGraph [name=" + name + ", backend=" + backend + "]";
+    }
+
 }

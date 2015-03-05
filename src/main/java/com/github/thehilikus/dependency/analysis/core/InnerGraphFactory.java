@@ -29,7 +29,7 @@ public class InnerGraphFactory {
      * @param listOfEdges a list of edges of each subgraph
      * @return a super graph composed of the given elements
      */
-    public static Graph createSupergraph(String name, List<Map<String, Set<String>>> listOfEdges) {
+    public static SuperGraph createSupergraph(String name, List<Map<String, Set<String>>> listOfEdges) {
 	List<Graph> subgraphs = listOfEdges.stream().map(edges -> createGraph(name + "_sub", edges))
 		.collect(Collectors.toList());
 	return new SuperGraph(name, subgraphs);
