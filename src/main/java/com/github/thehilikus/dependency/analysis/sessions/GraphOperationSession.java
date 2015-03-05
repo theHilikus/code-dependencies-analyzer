@@ -25,7 +25,6 @@ public class GraphOperationSession implements Runnable {
     @Override
     public void run() {
 	graph.apply(command);
-
     }
 
 }
