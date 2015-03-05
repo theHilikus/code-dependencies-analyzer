@@ -34,11 +34,12 @@ public class PackageGraphCreatorTest {
 	provider.addDependencies("a.foo", "b.foo", "c.foo", "d.foo");
 	provider.addDependencies("b.bar", "f.bar", "c.bar");
 	provider.addDependencies("e.foo", "f.foo", "c.bar2");
+	provider.addDependencies("e.bar", "f.foo", "g.foo");
 	String graphName = "test-graph";
 	Graph actual = testingUnit.createGraph(graphName, provider.getDependencies());
 
 	assertEquals(actual.getName(), graphName);
-	assertEquals(actual.getNodesCount(), 6);
+	assertEquals(actual.getNodesCount(), 7);
 	
     }
 }

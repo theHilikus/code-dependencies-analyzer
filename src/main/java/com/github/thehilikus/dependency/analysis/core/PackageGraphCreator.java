@@ -1,12 +1,11 @@
 package com.github.thehilikus.dependency.analysis.core;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
+import java.util.stream.Collectors;
 
 import com.github.thehilikus.dependency.analysis.api.DependencySource;
 import com.github.thehilikus.dependency.analysis.api.Graph;
@@ -21,20 +20,29 @@ public class PackageGraphCreator implements GraphCreator {
 
     @Override
     public Graph createGraph(String name, Collection<DependencySource> sources) {
-	DefaultDirectedGraph<String, DefaultEdge> graph = new DefaultDirectedGraph<>(DefaultEdge.class);
+	Map<String, Set<String>> consolidated = new HashMap<>();
 	for (DependencySource depProvider : sources) {
-	    Map<String, Set<String>> dependencies = depProvider.getDependencies();
-	    for (Entry<String, Set<String>> depEntry : dependencies.entrySet()) {
-		String sourcePackage = getPackageFromClass(depEntry.getKey());
-		graph.addVertex(sourcePackage);
-		for (String destinationClass : depEntry.getValue()) {
-		    String destinationPackage = getPackageFromClass(destinationClass);
-		    graph.addVertex(destinationPackage);
-		    graph.addEdge(sourcePackage, destinationPackage);
-		}
+	    Map<String, Set<String>> dependenciesWithClasses = depProvider.getDependencies();
+	    Map<String, Set<String>> dependencies = removeClassesNames(dependenciesWithClasses);
+	    consolidateDependencies(consolidated, dependencies);
+	}
+	return InnerGraphFactory.createGraph(name, consolidated);
+    }
+
+
+    private static Map<String, Set<String>> removeClassesNames(Map<String, Set<String>> dependenciesWithClasses) {
+	Map<String, Set<String>> result = new HashMap<>();
+	for (Entry<String, Set<String>> entry : dependenciesWithClasses.entrySet()) {
+	    String keyPackage = getPackageFromClass(entry.getKey());
+	    Set<String> values = entry.getValue().stream().map(value -> getPackageFromClass(value))
+		    .collect(Collectors.toSet());
+	    if (result.containsKey(keyPackage)) {
+		result.get(keyPackage).addAll(values);
+	    } else {
+		result.put(keyPackage, values);
 	    }
 	}
-	return new GraphAdapter(name, graph);
+	return result;
     }
 
     private static String getPackageFromClass(String className) {
@@ -42,5 +50,17 @@ public class PackageGraphCreator implements GraphCreator {
 	assert dotPos > 0 : "Invalid Fully-qualified class: " + className;
 
 	return className.substring(0, dotPos);
+    }
+
+    private static void consolidateDependencies(Map<String, Set<String>> consolidated, Map<String, Set<String>> dependencies) {
+	for (Entry<String, Set<String>> entry : dependencies.entrySet()) {
+	    String key = entry.getKey();
+	    if (consolidated.containsKey(key)) {
+		consolidated.get(key).addAll(entry.getValue());
+	    } else {
+		consolidated.put(key, entry.getValue());
+	    }
+	}
+	
     }
 }
