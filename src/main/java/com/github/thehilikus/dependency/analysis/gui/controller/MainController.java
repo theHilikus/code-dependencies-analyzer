@@ -24,7 +24,7 @@ import com.github.thehilikus.dependency.analysis.gui.controller.tasks.JavaSource
  *
  * @author hilikus
  */
-public class MainController {
+public class MainController implements UiController {
     private MainPanel mainPanel;
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -108,21 +108,22 @@ public class MainController {
 	return null;
     }
 
-    /**
-     * @param mainPanel the first panel to load
-     */
+    @Override
     public void setMainPanel(MainPanel mainPanel) {
 	this.mainPanel = mainPanel;
     }
 
-    /**
-     * Cleans up all the resources
-     */
-    public void cleanup() {
+
+    @Override
+    public void stop() {
+	log.debug("[stop] Stopping controller");
+	
 	stopExecutor();
     }
 
     private void stopExecutor() {
+	log.trace("[stopExecutor] Stopping executor");
+	
 	executor.shutdown();
 	try {
 	    executor.awaitTermination(5, TimeUnit.SECONDS);
