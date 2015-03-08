@@ -14,7 +14,6 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.thehilikus.dependency.analysis.gui.controller.MainController;
 import com.github.thehilikus.dependency.analysis.gui.controller.UiController;
 
 /**
@@ -27,8 +26,6 @@ public class MainPanel extends Application {
     private Stage primaryStage;
 
     private BorderPane rootLayout;
-
-    private FXMLLoader loader = new FXMLLoader();
 
     private static final Logger log = LoggerFactory.getLogger(MainPanel.class);
 
@@ -43,8 +40,9 @@ public class MainPanel extends Application {
 	this.primaryStage.setTitle("Code Dependency Analyzer");
 
 	try {
-	    initRootLayout();
-	    connectController();
+	    FXMLLoader loader = new FXMLLoader(getClass().getResource("view/MainPanel.fxml"));
+	    initRootLayout(loader);
+	    connectController(loader);
 	} catch (IOException exc) {
 	    log.error("[start] Error creating main panel", exc);
 	}
@@ -57,15 +55,14 @@ public class MainPanel extends Application {
 	controller.stop();
     }
 
-    private void connectController() {
+    private void connectController(FXMLLoader loader) {
 	controller = loader.getController();
 
 	controller.setMainPanel(this);
-
     }
 
-    private void initRootLayout() throws IOException {
-	loader.setLocation(getClass().getResource("view/MainPanel.fxml"));
+    private void initRootLayout(FXMLLoader loader) throws IOException {
+	
 
 	rootLayout = loader.load();
 
