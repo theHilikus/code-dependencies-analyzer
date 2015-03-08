@@ -3,6 +3,7 @@ package com.github.thehilikus.dependency.analysis.gui.controller;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
@@ -112,5 +113,22 @@ public class MainController {
      */
     public void setMainPanel(MainPanel mainPanel) {
 	this.mainPanel = mainPanel;
+    }
+
+    /**
+     * Cleans up all the resources
+     */
+    public void cleanup() {
+	stopExecutor();
+    }
+
+    private void stopExecutor() {
+	executor.shutdown();
+	try {
+	    executor.awaitTermination(5, TimeUnit.SECONDS);
+	} catch (InterruptedException exc) {
+	    executor.shutdownNow();
+	}
+	executor.shutdownNow();
     }
 }
