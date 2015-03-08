@@ -5,6 +5,7 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.layout.BorderPane;
@@ -76,4 +77,29 @@ public class MainPanel extends Application {
     public static void main(String[] args) {
 	launch(args);
     }
+
+    /**
+     * Puts the panel in waiting mode (due to a long operation for example)
+     * 
+     * @param waiting true if waiting is starting; false if it is finishing
+     */
+    public void waiting(boolean waiting) {
+	if (waiting) {
+	    rootLayout.setCursor(Cursor.WAIT);
+	} else {
+	    rootLayout.setCursor(Cursor.DEFAULT);
+	}
+    }
+
+    /**
+     * Reports an error
+     * 
+     * @param errorMessage the message explaining the problem
+     */
+    public void reportError(String errorMessage) {
+	log.error("[reportError] Error: {}", errorMessage);
+	// TODO: add Alert dialog when openjfx 8u40 is released
+
+    }
+
 }
