@@ -57,6 +57,7 @@ public class JavaSourceCodeReader implements DependencySource {
 	FileFinder fileWalker = new FileFinder(PATTERN);
 	Files.walkFileTree(rootDirectory, fileWalker);
 	javaSourceFiles = fileWalker.getMatchingFiles();
+	log.info("[filterJavaSources] Found files: {}", javaSourceFiles);
     }
 
     @Override
@@ -105,7 +106,7 @@ public class JavaSourceCodeReader implements DependencySource {
 		}
 
 		if (packageName != null && className != null) {
-		    String fullyQualifiedName = packageName +'.' + className;
+		    String fullyQualifiedName = packageName + '.' + className;
 		    log.debug("[getDependencies] Done scanning dependencies for " + fullyQualifiedName + ": "
 			    + deps.size() + " found");
 		    result.put(fullyQualifiedName, deps);
@@ -129,7 +130,6 @@ public class JavaSourceCodeReader implements DependencySource {
 	}
 	return null;
     }
-    
 
     @Override
     public String getName() {
