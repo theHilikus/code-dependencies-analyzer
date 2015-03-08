@@ -31,16 +31,11 @@ public class MainController {
 
     private Set<DependencySource> dependencySources = new HashSet<>();
 
-    private ExecutorService executor;
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private Future<Graph> operation;
 
     private static final Logger log = LoggerFactory.getLogger(MainController.class);
-
-    @FXML
-    private void initialize() {
-	executor = Executors.newSingleThreadExecutor();
-    }
 
     @FXML
     private void createPackageGraphSession() {
@@ -52,7 +47,7 @@ public class MainController {
 	PackageGraphCreator packageGraph = new PackageGraphCreator();
 	GraphCreationSession graphSession = new GraphCreationSession("test", packageGraph, dependencySources);
 	
-	if (!operation.isDone()) {
+	if (operation != null && !operation.isDone()) {
 	    log.info("[createPackageGraphSession] Previous task was not finished. Cancelling it");
 	    operation.cancel(true);
 	}
@@ -71,6 +66,7 @@ public class MainController {
 	    try {
 		JavaSourceCodeReader sourceCodeReader = new JavaSourceCodeReader(rootFolder.toPath());
 		dependencySources.add(sourceCodeReader);
+		log.info("[selectJavaSourceCodeFolder] Java sourceCode reader initialized successfully");
 	    } catch (IOException exc) {
 		log.error("[selectJavaSourceCodeFolder] There was a problem reading source code: ", exc);
 		// TODO: add Alert dialog when openjfx 8u40 is released
@@ -83,6 +79,5 @@ public class MainController {
      */
     public void setMainPanel(MainPanel mainPanel) {
 	this.mainPanel = mainPanel;
-
     }
 }
