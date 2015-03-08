@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.thehilikus.dependency.analysis.gui.controller.MainController;
+import com.github.thehilikus.dependency.analysis.gui.controller.UiController;
 
 /**
  * The main panel of the application
@@ -30,6 +31,8 @@ public class MainPanel extends Application {
     private FXMLLoader loader = new FXMLLoader();
 
     private static final Logger log = LoggerFactory.getLogger(MainPanel.class);
+
+    private UiController controller;
 
     @FXML
     private Menu myMenu;
@@ -47,8 +50,15 @@ public class MainPanel extends Application {
 	}
     }
 
+    @Override
+    public void stop() throws Exception {
+	log.debug("[stop] Application is stopping");
+	
+	controller.stop();
+    }
+
     private void connectController() {
-	MainController controller = loader.getController();
+	controller = loader.getController();
 
 	controller.setMainPanel(this);
 
