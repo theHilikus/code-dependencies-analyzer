@@ -1,8 +1,10 @@
 package com.github.thehilikus.dependency.analysis.sessions;
 
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import com.github.thehilikus.dependency.analysis.api.DependencySource;
+import com.github.thehilikus.dependency.analysis.api.Graph;
 import com.github.thehilikus.dependency.analysis.api.GraphCreator;
 
 /**
@@ -10,7 +12,7 @@ import com.github.thehilikus.dependency.analysis.api.GraphCreator;
  *
  * @author hilikus
  */
-public class GraphCreationSession implements Runnable {
+public class GraphCreationSession implements Callable<Graph> {
 
     private GraphCreator graphCreator;
     private Set<DependencySource> dependenciesSources;
@@ -28,8 +30,8 @@ public class GraphCreationSession implements Runnable {
     }
 
     @Override
-    public void run() {
-	graphCreator.createGraph(graphName, dependenciesSources);
+    public Graph call() throws Exception {
+	return graphCreator.createGraph(graphName, dependenciesSources);
     }
 
 }

@@ -1,5 +1,7 @@
 package com.github.thehilikus.dependency.analysis.sessions;
 
+import java.util.concurrent.Callable;
+
 import com.github.thehilikus.dependency.analysis.api.Graph;
 import com.github.thehilikus.dependency.analysis.api.GraphOperation;
 
@@ -8,7 +10,7 @@ import com.github.thehilikus.dependency.analysis.api.GraphOperation;
  *
  * @author hilikus
  */
-public class GraphOperationSession implements Runnable {
+public class GraphOperationSession implements Callable<Graph> {
 
     private GraphOperation command;
     private Graph graph;
@@ -23,8 +25,8 @@ public class GraphOperationSession implements Runnable {
     }
 
     @Override
-    public void run() {
-	graph.apply(command);
+    public Graph call() throws Exception {
+	return graph.apply(command);
     }
 
 }
