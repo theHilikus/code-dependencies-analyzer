@@ -133,7 +133,7 @@ public class JavaSourceCodeReader implements DependencySource {
 
     @Override
     public String getName() {
-	return "Java SourceCode dependency reader";
+	return "Java SourceCode";
     }
 
     /* (non-Javadoc)
@@ -170,6 +170,11 @@ public class JavaSourceCodeReader implements DependencySource {
 	    return false;
 	}
 	return true;
+    }
+
+    @Override
+    public String getDescription() {
+	return "Java SourceCode dependency reader";
     }
 
 }

@@ -20,4 +20,9 @@ public interface DependencySource {
      * @return a unique identifier for this source
      */
     String getName();
+
+    /**
+     * @return a long, human-friendly explanation of the source
+     */
+    String getDescription();
 }
