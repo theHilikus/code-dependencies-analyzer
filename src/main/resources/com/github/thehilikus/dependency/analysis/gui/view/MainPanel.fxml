@@ -6,16 +6,18 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
+<?import org.controlsfx.control.*?>
 
-<BorderPane prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.thehilikus.dependency.analysis.gui.controller.MainController">
+<BorderPane prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="com.github.thehilikus.dependency.analysis.gui.controller.MainController">
 	<top>
 		<MenuBar id="menuBar">
 			<menus>
-            <Menu mnemonicParsing="false" text="Source">
-              <items>
-                <MenuItem mnemonicParsing="false" onAction="#selectJavaSourceCodeFolder" text="Java SourceCode Folder" />
-              </items>
-            </Menu>
+				<Menu mnemonicParsing="false" text="Source">
+					<items>
+						<MenuItem mnemonicParsing="false" onAction="#selectJavaSourceCodeFolder" text="Java SourceCode Folder" />
+					</items>
+				</Menu>
 				<Menu id="loadMenu" mnemonicParsing="false" text="Load">
 					<items>
 						<MenuItem mnemonicParsing="false" onAction="#createPackageGraphSession" text="Package Graph" />
@@ -33,7 +35,8 @@
 	<center>
 		<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0">
 			<children>
-				<Label alignment="CENTER" layoutX="155.0" layoutY="177.0" style="&#10;" text="Drag components from Library here…" textAlignment="CENTER" textFill="#9f9f9f" wrapText="false">
+				<Label alignment="CENTER" layoutX="155.0" layoutY="177.0" style="&#10;" text="Drag components from Library here…"
+					textAlignment="CENTER" textFill="#9f9f9f" wrapText="false">
 					<font>
 						<Font size="18.0" />
 					</font>
@@ -41,4 +44,9 @@
 			</children>
 		</AnchorPane>
 	</center>
+	<bottom>
+		<StatusBar>
+			<text>Ready</text>
+		</StatusBar>
+	</bottom>
 </BorderPane>
