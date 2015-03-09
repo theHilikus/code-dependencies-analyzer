@@ -32,7 +32,7 @@ public class JavaSourceCodeReader implements DependencySource {
 
     private static final Pattern IMPORT_PATTERN = Pattern.compile("^\\s*import\\s+([a-zA-Z0-9\\.]+)\\s*;.*");
     private static final Pattern PACKAGE_PATTERN = Pattern.compile("^\\s*package\\s+([a-zA-Z0-9\\.]+)\\s*;.*");
-    private static final Pattern CLASS_PATTERN = Pattern.compile("^\\s*.*\\s*class\\s+(\\w+)\\s*.*");
+    private static final Pattern CLASS_PATTERN = Pattern.compile("^\\s*.*\\s*(class|interface)\\s+(\\w+)\\s*.*");
 
     private List<Path> javaSourceFiles;
 
@@ -75,11 +75,20 @@ public class JavaSourceCodeReader implements DependencySource {
 		String className = null;
 		String line = reader.readLine();
 		while (line != null) {
-		    String importDep = tryToMatch(line, IMPORT_PATTERN);
-		    if (importDep == null) {
-			if (packageName == null) {
-			    packageName = tryToMatch(line, PACKAGE_PATTERN);
+		    if (!line.isEmpty()) {
+			String importDep = tryToMatch(line, IMPORT_PATTERN);
+			if (importDep == null) {
 			    if (packageName == null) {
+				packageName = tryToMatch(line, PACKAGE_PATTERN);
+				if (packageName == null) {
+				    className = tryToMatch(line, CLASS_PATTERN);
+				    if (className != null) {
+					// found class declaration, there's nothing else we're
+					// interested in
+					break;
+				    }
+				}
+			    } else {
 				className = tryToMatch(line, CLASS_PATTERN);
 				if (className != null) {
 				    // found class declaration, there's nothing else we're
@@ -87,19 +96,12 @@ public class JavaSourceCodeReader implements DependencySource {
 				    break;
 				}
 			    }
-			} else {
-			    className = tryToMatch(line, CLASS_PATTERN);
-			    if (className != null) {
-				// found class declaration, there's nothing else we're
-				// interested in
-				break;
-			    }
-			}
 
-		    } else {
-			// found import
-			log.trace("[getDependencies] Found import: " + importDep);
-			deps.add(importDep);
+			} else {
+			    // found import
+			    log.trace("[getDependencies] Found import: " + importDep);
+			    deps.add(importDep);
+			}
 		    }
 
 		    line = reader.readLine();
@@ -126,7 +128,11 @@ public class JavaSourceCodeReader implements DependencySource {
     private static String tryToMatch(String line, Pattern patternToUse) {
 	Matcher matcher = patternToUse.matcher(line);
 	if (matcher.find()) {
-	    return matcher.group(1);
+	    if (patternToUse != CLASS_PATTERN) {
+		return matcher.group(1);
+	    } else {
+		return matcher.group(2);
+	    }
 	}
 	return null;
     }

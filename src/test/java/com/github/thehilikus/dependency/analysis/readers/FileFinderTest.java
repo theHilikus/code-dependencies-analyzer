@@ -40,7 +40,7 @@ public class FileFinderTest {
 	Files.walkFileTree(TESTING_DIR, testingUnit);
 
 	List<Path> result = testingUnit.getMatchingFiles();
-	assertEquals(result.size(), 3);
+	assertEquals(result.size(), 4);
 	Path file1 = Paths.get("file1.java");
 	Path file3 = Paths.get("subdir", "file3.java");
 	assertTrue(result.contains(TESTING_DIR.resolve(file1)));

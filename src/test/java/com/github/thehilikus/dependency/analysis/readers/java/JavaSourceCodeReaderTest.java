@@ -41,12 +41,13 @@ public class JavaSourceCodeReaderTest {
     public void testGetDependencies() {
 	Map<String, Set<String>> result = testingUnit.getDependencies();
 
-	assertEquals(result.size(), 2);
+	assertEquals(result.size(), 3);
 
 	Map<String, Set<String>> expected = createExpectedMap();
 
 	assertEquals(result.get("com.github.thehilikus.blah"), expected.get("com.github.thehilikus.blah"));
 	assertEquals(result.get("a.b.MyPrivateClass"), expected.get("a.b.MyPrivateClass"));
+	assertEquals(result.get("other.hello.MyInterface"), expected.get("other.hello.MyInterface"));
 
     }
 
@@ -62,6 +63,10 @@ public class JavaSourceCodeReaderTest {
 	expectedThree.add("3.1");
 	expectedThree.add("3.2.hello.world");
 	result.put("a.b.MyPrivateClass", expectedThree);
+	
+	Set<String> expectedFour = new HashSet<>();
+	expectedFour.add("4.1");
+	result.put("other.hello.MyInterface", expectedFour);
 
 	return result;
     }
