@@ -13,12 +13,12 @@
 	<top>
 		<MenuBar id="menuBar">
 			<menus>
-				<Menu mnemonicParsing="false" text="Source">
+				<Menu mnemonicParsing="false" text="Load">
 					<items>
 						<MenuItem mnemonicParsing="false" onAction="#selectJavaSourceCodeFolder" text="Java SourceCode Folder" />
 					</items>
 				</Menu>
-				<Menu id="loadMenu" mnemonicParsing="false" text="Load">
+				<Menu mnemonicParsing="false" text="Create">
 					<items>
 						<MenuItem mnemonicParsing="false" onAction="#createPackageGraphSession" text="Package Graph" />
 					</items>
