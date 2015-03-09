@@ -54,7 +54,7 @@ public class MainController implements UiController {
 	    executor.execute(graphTask);
 	} catch (Exception exc) {
 	    log.error("[createPackageGraphSession] There was a problem running a graph creation session: ", exc);
-	    // TODO: add Alert dialog when openjfx 8u40 is released
+	    mainPanel.reportException("There was an error creating the graph", exc);
 	}
 
     }
@@ -88,7 +88,7 @@ public class MainController implements UiController {
 		executor.execute(codeSelectionTask);
 	    } catch (Exception exc) {
 		log.error("[selectJavaSourceCodeFolder] There was a problem reading source code: ", exc);
-		// TODO: add Alert dialog when openjfx 8u40 is released
+		mainPanel.reportException("There was a problem reading source code", exc);
 	    }
 	}
     }
@@ -113,17 +113,16 @@ public class MainController implements UiController {
 	this.mainPanel = mainPanel;
     }
 
-
     @Override
     public void stop() {
 	log.debug("[stop] Stopping controller");
-	
+
 	stopExecutor();
     }
 
     private void stopExecutor() {
 	log.trace("[stopExecutor] Stopping executor");
-	
+
 	executor.shutdown();
 	try {
 	    executor.awaitTermination(5, TimeUnit.SECONDS);
