@@ -58,12 +58,18 @@ public class MainController implements UiController {
 	try {
 	    PackageGraphCreator packageGraph = new PackageGraphCreator();
 	    graphTask = new GraphCreationTask("test", packageGraph, sourceCodeReader);
+	    graphTask.setOnSucceeded(event -> displayGraph(graphTask.getValue()));
+	    
 	    bindAndRunTask(graphTask);
 	} catch (Exception exc) {
 	    log.error("[createPackageGraphSession] There was a problem running a graph creation session: ", exc);
 	    mainPanel.reportException("There was an error creating the graph", exc);
 	}
 
+    }
+
+    private void displayGraph(Graph newGraph) {
+	// TODO Auto-generated method stub
     }
 
     private void cancelPreviousTask() {
