@@ -5,14 +5,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -38,9 +35,6 @@ public class MainPanel extends Application {
     private static final Logger log = LoggerFactory.getLogger(MainPanel.class);
 
     private UiController controller;
-
-    @FXML
-    private Menu myMenu;
 
     @Override
     public void start(Stage primaryStageFX) {
@@ -90,19 +84,6 @@ public class MainPanel extends Application {
      */
     public static void main(String[] args) {
 	launch(args);
-    }
-
-    /**
-     * Puts the panel in waiting mode (due to a long operation for example)
-     * 
-     * @param waiting true if waiting is starting; false if it is finishing
-     */
-    public void waiting(boolean waiting) {
-	if (waiting) {
-	    rootLayout.setCursor(Cursor.WAIT);
-	} else {
-	    rootLayout.setCursor(Cursor.DEFAULT);
-	}
     }
 
     /**
