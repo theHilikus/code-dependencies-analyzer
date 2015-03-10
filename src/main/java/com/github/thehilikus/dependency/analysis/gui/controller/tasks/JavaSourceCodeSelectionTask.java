@@ -2,8 +2,6 @@ package com.github.thehilikus.dependency.analysis.gui.controller.tasks;
 
 import java.nio.file.Path;
 
-import javafx.concurrent.Task;
-
 import com.github.thehilikus.dependency.analysis.api.DependencySource;
 import com.github.thehilikus.dependency.analysis.readers.java.JavaSourceCodeReader;
 
@@ -12,7 +10,7 @@ import com.github.thehilikus.dependency.analysis.readers.java.JavaSourceCodeRead
  *
  * @author hilikus
  */
-public class JavaSourceCodeSelectionTask extends Task<DependencySource> {
+public class JavaSourceCodeSelectionTask extends AbstractAnalyzerTask<DependencySource> {
     private Path rootFolder;
 
     /**
@@ -25,8 +23,17 @@ public class JavaSourceCodeSelectionTask extends Task<DependencySource> {
     @Override
     protected DependencySource call() throws Exception {
 	DependencySource result = new JavaSourceCodeReader(rootFolder);
-
 	return result;
+    }
+
+    @Override
+    protected String getSuccessMessage() {
+	return "Java sourceCode reader initialized successfully";
+    }
+
+    @Override
+    protected String getFailureMessage() {
+	return "Java sourceCode reader creation failed";
     }
 
 }

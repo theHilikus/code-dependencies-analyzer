@@ -7,14 +7,12 @@ import com.github.thehilikus.dependency.analysis.api.Graph;
 import com.github.thehilikus.dependency.analysis.api.GraphCreator;
 import com.github.thehilikus.dependency.analysis.sessions.GraphCreationSession;
 
-import javafx.concurrent.Task;
-
 /**
  * A javafx wrapper on GraphCreationSession
  *
  * @author hilikus
  */
-public class GraphCreationTask extends Task<Graph> {
+public class GraphCreationTask extends AbstractAnalyzerTask<Graph> {
 
     private final GraphCreationSession session;
 
@@ -46,6 +44,16 @@ public class GraphCreationTask extends Task<Graph> {
     @Override
     protected Graph call() throws Exception {
 	return session.call();
+    }
+
+    @Override
+    protected String getSuccessMessage() {
+	return "Graph created successfully";
+    }
+
+    @Override
+    protected String getFailureMessage() {
+	return "Graph creation failed";
     }
 
 }
