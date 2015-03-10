@@ -20,6 +20,13 @@ public abstract class AbstractAnalyzerTask<T> extends Task<T> {
      */
     protected abstract String getFailureMessage();
 
+    /**
+     * @return a message to display while the task is executing
+     */
+    protected String getRunningMessage() {
+	return "Running task. Please wait...";
+    }
+
     @Override
     protected void succeeded() {
 	updateMessage(getSuccessMessage());
@@ -29,5 +36,10 @@ public abstract class AbstractAnalyzerTask<T> extends Task<T> {
     protected void failed() {
 	updateMessage(getFailureMessage());
     }
-    
+
+    @Override
+    protected void running() {
+	updateMessage(getRunningMessage());
+    }
+
 }
