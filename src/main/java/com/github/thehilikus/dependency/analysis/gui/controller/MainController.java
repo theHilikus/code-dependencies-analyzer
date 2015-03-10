@@ -42,10 +42,10 @@ public class MainController implements UiController {
 
     @FXML
     private StatusBar statusBar;
-    
+
     @FXML
     private Parent root;
-    
+
     @FXML
     private void createPackageGraphSession() {
 	if (sourceCodeReader == null) {
@@ -58,9 +58,7 @@ public class MainController implements UiController {
 	try {
 	    PackageGraphCreator packageGraph = new PackageGraphCreator();
 	    graphTask = new GraphCreationTask("test", packageGraph, sourceCodeReader);
-	    bindTask(graphTask);
-
-	    executor.execute(graphTask);
+	    bindAndRunTask(graphTask);
 	} catch (Exception exc) {
 	    log.error("[createPackageGraphSession] There was a problem running a graph creation session: ", exc);
 	    mainPanel.reportException("There was an error creating the graph", exc);
@@ -82,12 +80,12 @@ public class MainController implements UiController {
 	File rootFolder = folderChooser.showDialog(mainPanel.getPrimaryStage());
 	if (rootFolder != null) {
 	    try {
-		AbstractAnalyzerTask<DependencySource> codeSelectionTask = new JavaSourceCodeSelectionTask(rootFolder.toPath());
+		AbstractAnalyzerTask<DependencySource> codeSelectionTask = new JavaSourceCodeSelectionTask(
+			rootFolder.toPath());
 
-		bindTask(codeSelectionTask);
-		codeSelectionTask.setOnSucceeded(event -> sourceCodeReader = (DependencySource) event.getSource().getValue());
-
-		executor.execute(codeSelectionTask);
+		codeSelectionTask.setOnSucceeded(event -> sourceCodeReader = (DependencySource) event.getSource()
+			.getValue());
+		bindAndRunTask(codeSelectionTask);
 	    } catch (Exception exc) {
 		log.error("[selectJavaSourceCodeFolder] There was a problem reading source code: ", exc);
 		mainPanel.reportException("There was a problem reading source code", exc);
@@ -95,13 +93,17 @@ public class MainController implements UiController {
 	}
     }
 
-    private void bindTask(AbstractAnalyzerTask<?> task) {
+    private void bindAndRunTask(AbstractAnalyzerTask<?> task) {
 	statusBar.textProperty().bind(task.messageProperty());
-	
-	ObjectBinding<Cursor> cursorBinding = Bindings.when(task.runningProperty()).then(Cursor.WAIT).otherwise(Cursor.DEFAULT);
+
+	ObjectBinding<Cursor> cursorBinding = Bindings.when(task.runningProperty()).then(Cursor.WAIT)
+		.otherwise(Cursor.DEFAULT);
 	root.cursorProperty().bind(cursorBinding);
-	
+
 	//TODO: unbind after done
+	
+	log.debug("[bindAndRunTask] Finished binding {} to the UI, Ready to execute it", task);
+	executor.execute(task);
     }
 
     @Override
