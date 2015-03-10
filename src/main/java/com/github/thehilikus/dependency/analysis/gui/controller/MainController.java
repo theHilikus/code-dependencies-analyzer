@@ -5,17 +5,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ObjectBinding;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
+import javafx.scene.Parent;
 import javafx.stage.DirectoryChooser;
 
+import org.controlsfx.control.StatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.thehilikus.dependency.analysis.api.DependencySource;
+import com.github.thehilikus.dependency.analysis.api.Graph;
 import com.github.thehilikus.dependency.analysis.core.PackageGraphCreator;
 import com.github.thehilikus.dependency.analysis.gui.MainPanel;
+import com.github.thehilikus.dependency.analysis.gui.controller.tasks.AbstractAnalyzerTask;
 import com.github.thehilikus.dependency.analysis.gui.controller.tasks.GraphCreationTask;
 import com.github.thehilikus.dependency.analysis.gui.controller.tasks.JavaSourceCodeSelectionTask;
 
@@ -29,12 +34,18 @@ public class MainController implements UiController {
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    private GraphCreationTask graphTask;
+    private AbstractAnalyzerTask<Graph> graphTask;
 
     private DependencySource sourceCodeReader;
 
     private static final Logger log = LoggerFactory.getLogger(MainController.class);
 
+    @FXML
+    private StatusBar statusBar;
+    
+    @FXML
+    private Parent root;
+    
     @FXML
     private void createPackageGraphSession() {
 	if (sourceCodeReader == null) {
@@ -47,9 +58,7 @@ public class MainController implements UiController {
 	try {
 	    PackageGraphCreator packageGraph = new PackageGraphCreator();
 	    graphTask = new GraphCreationTask("test", packageGraph, sourceCodeReader);
-
-	    graphTask.setOnScheduled(event -> waiting(event));
-	    graphTask.setOnSucceeded(event -> graphFinished(event));
+	    bindTask(graphTask);
 
 	    executor.execute(graphTask);
 	} catch (Exception exc) {
@@ -57,12 +66,6 @@ public class MainController implements UiController {
 	    mainPanel.reportException("There was an error creating the graph", exc);
 	}
 
-    }
-
-    private Object graphFinished(WorkerStateEvent event) {
-	mainPanel.waiting(false);
-
-	return null;
     }
 
     private void cancelPreviousTask() {
@@ -74,16 +77,15 @@ public class MainController implements UiController {
 
     @FXML
     private void selectJavaSourceCodeFolder() {
-
 	DirectoryChooser folderChooser = new DirectoryChooser();
 	folderChooser.setTitle("Select root folder to scan for java source code");
 	File rootFolder = folderChooser.showDialog(mainPanel.getPrimaryStage());
 	if (rootFolder != null) {
 	    try {
-		Task<DependencySource> codeSelectionTask = new JavaSourceCodeSelectionTask(rootFolder.toPath());
+		AbstractAnalyzerTask<DependencySource> codeSelectionTask = new JavaSourceCodeSelectionTask(rootFolder.toPath());
 
-		codeSelectionTask.setOnScheduled(event -> waiting(event));
-		codeSelectionTask.setOnSucceeded(event -> codeSelectionFinished(event));
+		bindTask(codeSelectionTask);
+		codeSelectionTask.setOnSucceeded(event -> sourceCodeReader = (DependencySource) event.getSource().getValue());
 
 		executor.execute(codeSelectionTask);
 	    } catch (Exception exc) {
@@ -93,19 +95,13 @@ public class MainController implements UiController {
 	}
     }
 
-    private Void codeSelectionFinished(WorkerStateEvent event) {
-	sourceCodeReader = (DependencySource) event.getSource().getValue();
-	log.info("[selectJavaSourceCodeFolder] Java sourceCode reader initialized successfully");
-	mainPanel.waiting(false);
-
-	return null;
-    }
-
-    private Void waiting(WorkerStateEvent event) {
-	log.debug("[waiting] Waiting for {}", event.getSource());
-	mainPanel.waiting(true);
-
-	return null;
+    private void bindTask(AbstractAnalyzerTask<?> task) {
+	statusBar.textProperty().bind(task.messageProperty());
+	
+	ObjectBinding<Cursor> cursorBinding = Bindings.when(task.runningProperty()).then(Cursor.WAIT).otherwise(Cursor.DEFAULT);
+	root.cursorProperty().bind(cursorBinding);
+	
+	//TODO: unbind after done
     }
 
     @Override
