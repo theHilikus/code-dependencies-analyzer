@@ -3,13 +3,13 @@ package com.github.thehilikus.dependency.analysis.gui.graph;
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
 
-import com.github.thehilikus.dependency.analysis.adapters.JungGraphAdapter;
-import com.github.thehilikus.dependency.analysis.api.Graph;
+import org.jgrapht.graph.DefaultEdge;
 
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.util.Relaxer;
 import edu.uci.ics.jung.algorithms.layout.util.VisRunner;
@@ -19,13 +19,12 @@ import edu.uci.ics.jung.graph.util.Pair;
 public class GraphRegion extends Region {
 
     
-    private double CIRCLE_SIZE = 25;
-    private Layout<String, String> layout;
+    private double CIRCLE_SIZE = 5;
+    private Layout<String, DefaultEdge> layout;
     private Relaxer relaxer;
 
-    public GraphRegion(Graph graph) {
-	JungGraphAdapter jungGraph = new JungGraphAdapter(graph);
-	layout = new CircleLayout<>(jungGraph);
+    public GraphRegion(Layout<String, DefaultEdge> layout) {
+	this.layout = layout;
     }
     
     
@@ -36,7 +35,9 @@ public class GraphRegion extends Region {
     @Override
     protected void layoutChildren() {
 	super.layoutChildren();
-	layout.setSize(new Dimension(widthProperty().intValue(), heightProperty().intValue()));
+	//layout.setSize(new Dimension(widthProperty().intValue(), heightProperty().intValue()));
+	AnchorPane parent = (AnchorPane)getParent();
+	layout.setSize(new Dimension((int)parent.getWidth(), (int) parent.getHeight()));
 	// relax the layout
 	if (relaxer != null) {
 	    relaxer.stop();
@@ -50,19 +51,20 @@ public class GraphRegion extends Region {
 		relaxer.relax();
 	    }
 	}
-	edu.uci.ics.jung.graph.Graph<String, String> graph = layout.getGraph();
+	edu.uci.ics.jung.graph.Graph<String, DefaultEdge> graph = layout.getGraph();
 	// draw the vertices in the graph
 	for (String v : graph.getVertices()) {
 	    // Get the position of the vertex
 	    Point2D p = layout.transform(v);
 	    // draw the vertex as a circle
 	    Circle circle = new Circle(p.getX(), p.getY(), CIRCLE_SIZE);
+	    Tooltip.install(circle, new Tooltip(v));
 	    // add it to the group, so it is shown on screen
 	    this.getChildren().add(circle);
 	}
 
 	// draw the edges
-	for (String e : graph.getEdges()) {
+	for (DefaultEdge e : graph.getEdges()) {
 	    // get the end points of the edge
 	    Pair<String> endpoints = graph.getEndpoints(e);
 	    // Get the end points as Point2D objects so we can use them in the
@@ -74,5 +76,13 @@ public class GraphRegion extends Region {
 	    // add the edges to the screen
 	    this.getChildren().add(line);
 	}
+    }
+    
+    /*
+     * should not be necessary
+     */
+    public void stop() {
+	relaxer.stop(); //if not, thread leaks
+	
     }
 }
