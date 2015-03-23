@@ -10,19 +10,31 @@ import javafx.beans.binding.ObjectBinding;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 
 import org.controlsfx.control.StatusBar;
+import org.jgrapht.graph.DefaultEdge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.thehilikus.dependency.analysis.api.DependencySource;
 import com.github.thehilikus.dependency.analysis.api.Graph;
+import com.github.thehilikus.dependency.analysis.core.DependencyGraph;
 import com.github.thehilikus.dependency.analysis.core.PackageGraphCreator;
 import com.github.thehilikus.dependency.analysis.gui.MainPanel;
 import com.github.thehilikus.dependency.analysis.gui.controller.tasks.AbstractAnalyzerTask;
 import com.github.thehilikus.dependency.analysis.gui.controller.tasks.GraphCreationTask;
 import com.github.thehilikus.dependency.analysis.gui.controller.tasks.JavaSourceCodeSelectionTask;
+import com.github.thehilikus.dependency.analysis.gui.graph.GraphRegion;
+
+import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.FRLayout2;
+import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
+import edu.uci.ics.jung.algorithms.layout.KKLayout;
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 
 /**
  * A controller of user events of MainPanel
@@ -47,6 +59,11 @@ public class MainController implements UiController {
     private Parent root;
 
     @FXML
+    private AnchorPane center;
+
+    private GraphRegion region;
+
+    @FXML
     private void createPackageGraphSession() {
 	if (sourceCodeReader == null) {
 	    mainPanel.reportError("Please set a dependency provider first");
@@ -59,7 +76,7 @@ public class MainController implements UiController {
 	    PackageGraphCreator packageGraph = new PackageGraphCreator();
 	    graphTask = new GraphCreationTask("test", packageGraph, sourceCodeReader);
 	    graphTask.setOnSucceeded(event -> displayGraph(graphTask.getValue()));
-	    
+
 	    bindAndRunTask(graphTask);
 	} catch (Exception exc) {
 	    log.error("[createPackageGraphSession] There was a problem running a graph creation session: ", exc);
@@ -69,7 +86,18 @@ public class MainController implements UiController {
     }
 
     private void displayGraph(Graph newGraph) {
-	// TODO Auto-generated method stub
+	long timeStart = System.nanoTime();
+	//Layout<String, DefaultEdge> layout = new CircleLayout<>((DependencyGraph) newGraph); // TODO: hack, remove cast
+	//good Layout<String, DefaultEdge> layout = new FRLayout<>((DependencyGraph) newGraph); // TODO: hack, remove cast
+	//good Layout<String, DefaultEdge> layout = new FRLayout2<>((DependencyGraph) newGraph); // TODO: hack, remove cast
+	//best Layout<String, DefaultEdge> layout = new ISOMLayout<>((DependencyGraph) newGraph); // TODO: hack, remove cast
+	//not complete but promising Layout<String, DefaultEdge> layout = new KKLayout<>((DependencyGraph) newGraph); // TODO: hack, remove cast
+	Layout<String, DefaultEdge> layout = new SpringLayout<>((DependencyGraph) newGraph); // TODO: hack, remove cast
+	region = new GraphRegion(layout);
+	center.getChildren().clear();
+	center.getChildren().add(region);
+	long timeElapsed = System.nanoTime()-timeStart;
+	log.info("[displayGraph] Created graph with {} nodes in {} milliseconds", newGraph.getNodesCount(), TimeUnit.MILLISECONDS.convert(timeElapsed, TimeUnit.NANOSECONDS));
     }
 
     private void cancelPreviousTask() {
@@ -106,8 +134,8 @@ public class MainController implements UiController {
 		.otherwise(Cursor.DEFAULT);
 	root.cursorProperty().bind(cursorBinding);
 
-	//TODO: unbind after done
-	
+	// TODO: unbind after done
+
 	log.debug("[bindAndRunTask] Finished binding {} to the UI, Ready to execute it", task);
 	executor.execute(task);
     }
@@ -122,6 +150,7 @@ public class MainController implements UiController {
 	log.debug("[stop] Stopping controller");
 
 	stopExecutor();
+	region.stop();
     }
 
     private void stopExecutor() {
