@@ -15,8 +15,8 @@ import com.github.thehilikus.dependency.analysis.api.GraphCreator;
  */
 public class GraphCreationSession implements Callable<Graph> {
 
-    private GraphCreator graphCreator;
-    private Set<DependencySource> dependenciesSources;
+    private final GraphCreator graphCreator;
+    private final Set<DependencySource> dependenciesSources;
     private final String graphName;
 
     /**
@@ -54,5 +54,5 @@ public class GraphCreationSession implements Callable<Graph> {
     public Graph call() throws Exception {
 	return graphCreator.createGraph(graphName, dependenciesSources);
     }
-
+    
 }
