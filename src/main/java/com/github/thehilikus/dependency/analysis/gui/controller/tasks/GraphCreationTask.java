@@ -14,13 +14,11 @@ import com.github.thehilikus.dependency.analysis.sessions.GraphCreationSession;
  */
 public class GraphCreationTask extends AbstractAnalyzerTask<Graph> {
 
-    private final GraphCreationSession session;
-
     /**
      * @param creationSession session to wrap
      */
     public GraphCreationTask(GraphCreationSession creationSession) {
-	session = creationSession;
+	super(creationSession);
     }
 
     /**
@@ -39,11 +37,6 @@ public class GraphCreationTask extends AbstractAnalyzerTask<Graph> {
      */
     public GraphCreationTask(String name, GraphCreator creator, DependencySource source) {
 	this(new GraphCreationSession(name, creator, source));
-    }
-
-    @Override
-    protected Graph call() throws Exception {
-	return session.call();
     }
 
     @Override

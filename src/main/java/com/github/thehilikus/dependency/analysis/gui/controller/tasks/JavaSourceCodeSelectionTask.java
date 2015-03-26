@@ -1,6 +1,7 @@
 package com.github.thehilikus.dependency.analysis.gui.controller.tasks;
 
 import java.nio.file.Path;
+import java.util.concurrent.Callable;
 
 import com.github.thehilikus.dependency.analysis.api.DependencySource;
 import com.github.thehilikus.dependency.analysis.readers.java.JavaSourceCodeReader;
@@ -11,19 +12,19 @@ import com.github.thehilikus.dependency.analysis.readers.java.JavaSourceCodeRead
  * @author hilikus
  */
 public class JavaSourceCodeSelectionTask extends AbstractAnalyzerTask<DependencySource> {
-    private Path rootFolder;
 
     /**
-     * @param rootFolder the top folder containing the java sources
+     * @param rootDirectory the root folder to scan for source code
      */
-    public JavaSourceCodeSelectionTask(Path rootFolder) {
-	this.rootFolder = rootFolder;
+    public JavaSourceCodeSelectionTask(Path rootDirectory) {
+	this(() -> new JavaSourceCodeReader(rootDirectory)); // no need for an explicit session here
     }
 
-    @Override
-    protected DependencySource call() throws Exception {
-	DependencySource result = new JavaSourceCodeReader(rootFolder);
-	return result;
+    /**
+     * @param session the source scanning task
+     */
+    public JavaSourceCodeSelectionTask(Callable<DependencySource> session) {
+	super(session);
     }
 
     @Override
