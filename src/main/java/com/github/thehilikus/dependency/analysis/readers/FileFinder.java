@@ -14,6 +14,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.thehilikus.dependency.analysis.sessions.InterruptHelper;
+
 /**
  * A generic file finder based on a pattern in the file name. To use it use
  * {@link Files#walkFileTree(Path, java.nio.file.FileVisitor)}
@@ -24,7 +26,7 @@ public class FileFinder extends SimpleFileVisitor<Path> {
     private PathMatcher matcher;
 
     private List<Path> matchingFiles;
-
+    
     private static final Logger log = LoggerFactory.getLogger(FileFinder.class);
 
     /**
@@ -37,6 +39,9 @@ public class FileFinder extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+	if (InterruptHelper.isCancelled()) {
+	    return null;
+	}
 	if (matcher.matches(file.getFileName())) {
 	    matchingFiles.add(file);
 	    log.debug("[visitFile] Found matching file {}", file);
@@ -60,4 +65,5 @@ public class FileFinder extends SimpleFileVisitor<Path> {
     public boolean hasMatches() {
 	return !matchingFiles.isEmpty();
     }
+
 }

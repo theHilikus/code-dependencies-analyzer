@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.thehilikus.dependency.analysis.api.DependencySource;
 import com.github.thehilikus.dependency.analysis.readers.FileFinder;
+import com.github.thehilikus.dependency.analysis.sessions.InterruptHelper;
 
 /**
  * A dependency provider that knows how to extract dependencies out of a folder with java source
@@ -43,8 +44,9 @@ public class JavaSourceCodeReader implements DependencySource {
      * 
      * @param rootDirectory the top folder containing the java sources
      * @throws IOException if there was a problem reading the files
+     * @throws InterruptedException if interrupted while running
      */
-    public JavaSourceCodeReader(Path rootDirectory) throws IOException {
+    public JavaSourceCodeReader(Path rootDirectory) throws IOException, InterruptedException {
 	if (!Files.exists(rootDirectory) || !Files.isDirectory(rootDirectory)) {
 	    throw new IllegalArgumentException("Root directory has to be a readable folder");
 	}
@@ -53,21 +55,25 @@ public class JavaSourceCodeReader implements DependencySource {
 	filterJavaSources();
     }
 
-    private void filterJavaSources() throws IOException {
+    private void filterJavaSources() throws IOException, InterruptedException {
 	FileFinder fileWalker = new FileFinder(PATTERN);
+	InterruptHelper.throwExceptionIfInterrupted();
 	Files.walkFileTree(rootDirectory, fileWalker);
+	InterruptHelper.throwExceptionIfInterrupted(); // maybe file tree walk was interrupted
 	javaSourceFiles = fileWalker.getMatchingFiles();
 	log.info("[filterJavaSources] Found files: {}", javaSourceFiles);
+
     }
 
     @Override
-    public Map<String, Set<String>> getDependencies() {
+    public Map<String, Set<String>> getDependencies() throws InterruptedException {
 	if (javaSourceFiles == null) {
 	    throw new IllegalStateException("Cannot get list of dependencies. There was an error finding the files");
 	}
 
 	Map<String, Set<String>> result = new HashMap<>(javaSourceFiles.size());
 	for (Path sourceFile : javaSourceFiles) {
+	    InterruptHelper.throwExceptionIfInterrupted();
 	    log.debug("[getDependencies] Processing file " + sourceFile);
 	    Set<String> deps = new HashSet<>();
 	    try (BufferedReader reader = Files.newBufferedReader(sourceFile)) {
