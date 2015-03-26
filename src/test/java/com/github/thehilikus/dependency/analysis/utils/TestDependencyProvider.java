@@ -25,8 +25,9 @@ public class TestDependencyProvider {
     /**
      * @param source the origin of the dependencies
      * @param destinations all the dependencies to add
+     * @throws InterruptedException 
      */
-    public void addDependencies(String source, String... destinations) {
+    public void addDependencies(String source, String... destinations) throws InterruptedException {
 	Map<String, Set<String>> deps = new HashMap<>();
 	deps.put(source, Arrays.stream(destinations).collect(Collectors.toSet()));
 	DependencySource mockSource = mock(DependencySource.class);

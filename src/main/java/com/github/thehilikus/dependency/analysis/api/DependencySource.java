@@ -13,8 +13,9 @@ public interface DependencySource {
     /**
      * @return all the valid dependencies in the source. The key is the origin and the value is a
      *         set of dependents of the origin
+     * @throws InterruptedException if the operation is cancelled mid-flight
      */
-    Map<String, Set<String>> getDependencies();
+    Map<String, Set<String>> getDependencies() throws InterruptedException;
 
     /**
      * @return a unique identifier for this source

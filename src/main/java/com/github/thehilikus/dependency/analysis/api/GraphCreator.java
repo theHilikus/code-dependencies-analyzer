@@ -13,6 +13,8 @@ public interface GraphCreator {
      * @param graphName the unique name of the graph
      * @param sources all the dependency sources to use to construct the graph
      * @return the constructed graph
+     * @throws InterruptedException if the process is interrupted before it completes
      */
-    Graph createGraph(String graphName, Collection<DependencySource> sources);
+    Graph createGraph(String graphName, Collection<DependencySource> sources) throws InterruptedException;
+
 }

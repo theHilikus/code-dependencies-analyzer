@@ -29,9 +29,10 @@ public class PackageGraphCreatorTest {
 
     /**
      * Tests constructing a valid graph
+     * @throws InterruptedException 
      */
     @Test
-    public void testCreateValidGraph() {
+    public void testCreateValidGraph() throws InterruptedException {
 	provider.addDependencies("a.foo", "b.foo", "c.foo", "d.foo");
 	provider.addDependencies("b.bar", "f.bar", "c.bar");
 	provider.addDependencies("e.foo", "f.foo", "c.bar2");

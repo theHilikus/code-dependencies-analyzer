@@ -28,17 +28,19 @@ public class JavaSourceCodeReaderTest {
      * Prepares the tests
      * 
      * @throws IOException
+     * @throws InterruptedException 
      */
     @BeforeMethod
-    public void setup() throws IOException {
+    public void setup() throws IOException, InterruptedException {
 	testingUnit = new JavaSourceCodeReader(TESTING_DIR);
     }
 
     /**
      * Tests the basic functionality
+     * @throws InterruptedException 
      */
     @Test
-    public void testGetDependencies() {
+    public void testGetDependencies() throws InterruptedException {
 	Map<String, Set<String>> result = testingUnit.getDependencies();
 
 	assertEquals(result.size(), 3);
