@@ -7,14 +7,10 @@ package com.github.thehilikus.dependency.analysis.sessions;
  */
 public class InterruptHelper {
 
-    private InterruptHelper() {
-	// blocked
-    }
-
     /**
      * @return true if the running thread has been interrupted
      */
-    public static boolean isCancelled() {
+    public boolean isCancelled() {
 	return Thread.currentThread().isInterrupted();
     }
 
@@ -23,7 +19,7 @@ public class InterruptHelper {
      * 
      * @throws InterruptedException if the running thread has been interrupted
      */
-    public static void throwExceptionIfInterrupted() throws InterruptedException {
+    public void throwExceptionIfInterrupted() throws InterruptedException {
 	if (Thread.currentThread().isInterrupted()) {
 	    throw new InterruptedException();
 	}

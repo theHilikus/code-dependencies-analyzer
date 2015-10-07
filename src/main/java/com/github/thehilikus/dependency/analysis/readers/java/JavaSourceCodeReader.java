@@ -39,6 +39,8 @@ public class JavaSourceCodeReader implements DependencySource {
 
     private Path rootDirectory;
 
+    private InterruptHelper interruptHelper;
+
     /**
      * Constructs a dependency source by recursively navigating the given folder
      * 
@@ -47,19 +49,26 @@ public class JavaSourceCodeReader implements DependencySource {
      * @throws InterruptedException if interrupted while running
      */
     public JavaSourceCodeReader(Path rootDirectory) throws IOException, InterruptedException {
+	this(rootDirectory, new InterruptHelper());
+    }
+
+    JavaSourceCodeReader(Path rootDirectory, InterruptHelper helper) throws IOException, InterruptedException {
 	if (!Files.exists(rootDirectory) || !Files.isDirectory(rootDirectory)) {
 	    throw new IllegalArgumentException("Root directory has to be a readable folder");
 	}
 
 	this.rootDirectory = rootDirectory;
+	interruptHelper = helper;
+	
 	filterJavaSources();
     }
-
+    
+    
     private void filterJavaSources() throws IOException, InterruptedException {
 	FileFinder fileWalker = new FileFinder(PATTERN);
-	InterruptHelper.throwExceptionIfInterrupted();
+	interruptHelper.throwExceptionIfInterrupted();
 	Files.walkFileTree(rootDirectory, fileWalker);
-	InterruptHelper.throwExceptionIfInterrupted(); // maybe file tree walk was interrupted
+	interruptHelper.throwExceptionIfInterrupted(); // maybe file tree walk was interrupted
 	javaSourceFiles = fileWalker.getMatchingFiles();
 	log.info("[filterJavaSources] Found files: {}", javaSourceFiles);
 
@@ -73,7 +82,7 @@ public class JavaSourceCodeReader implements DependencySource {
 
 	Map<String, Set<String>> result = new HashMap<>(javaSourceFiles.size());
 	for (Path sourceFile : javaSourceFiles) {
-	    InterruptHelper.throwExceptionIfInterrupted();
+	    interruptHelper.throwExceptionIfInterrupted();
 	    log.debug("[getDependencies] Processing file " + sourceFile);
 	    Set<String> deps = new HashSet<>();
 	    try (BufferedReader reader = Files.newBufferedReader(sourceFile)) {

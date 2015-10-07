@@ -29,7 +29,8 @@ public class PackageGraphCreatorTest {
 
     /**
      * Tests constructing a valid graph
-     * @throws InterruptedException 
+     * 
+     * @throws InterruptedException
      */
     @Test
     public void testCreateValidGraph() throws InterruptedException {
@@ -42,6 +43,14 @@ public class PackageGraphCreatorTest {
 
 	assertEquals(actual.getName(), graphName);
 	assertEquals(actual.getNodesCount(), 7);
-	
+
+    }
+
+    /**
+     * Tests that an interrupt really stops processing
+     */
+    @Test
+    public void testInterruptions() {
+	// TODO: complete
     }
 }

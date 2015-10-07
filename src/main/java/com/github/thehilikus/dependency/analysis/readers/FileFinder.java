@@ -26,20 +26,34 @@ public class FileFinder extends SimpleFileVisitor<Path> {
     private PathMatcher matcher;
 
     private List<Path> matchingFiles;
-    
+
+    private InterruptHelper interruptHelper;
+
     private static final Logger log = LoggerFactory.getLogger(FileFinder.class);
 
     /**
      * @param patterns the glob patterns that give a possitive match
      */
     public FileFinder(String patterns) {
+	this(patterns, new InterruptHelper());
+    }
+
+    /**
+     * For unit-tests only
+     * 
+     * @param patterns the glob patterns that give a possitive match
+     * @param helper the interruption helper
+     */
+    FileFinder(String patterns, InterruptHelper helper) {
 	matcher = FileSystems.getDefault().getPathMatcher("glob:" + patterns);
 	matchingFiles = new ArrayList<>();
+
+	interruptHelper = helper;
     }
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-	if (InterruptHelper.isCancelled()) {
+	if (interruptHelper.isCancelled()) {
 	    return null;
 	}
 	if (matcher.matches(file.getFileName())) {
