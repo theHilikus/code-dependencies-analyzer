@@ -7,6 +7,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 <?import org.controlsfx.control.*?>
+<?import javafx.scene.control.MenuItem?>
 
 <BorderPane fx:id="root" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="com.github.thehilikus.dependency.analysis.gui.controller.MainController">
@@ -23,7 +24,11 @@
 						<MenuItem mnemonicParsing="false" onAction="#createPackageGraphSession" text="Package Graph" />
 					</items>
 				</Menu>
-				<Menu mnemonicParsing="false" text="Operations" />
+				<Menu mnemonicParsing="false" text="Operations">
+					<items>
+						<MenuItem mnemonicParsing="false" onAction="#createConnectedComponentsSession" text="Find Connected Components" />
+					</items>
+				</Menu>
 				<Menu mnemonicParsing="false" text="Help">
 					<items>
 						<MenuItem mnemonicParsing="false" text="About MyHelloApp" />

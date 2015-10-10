@@ -22,7 +22,9 @@ import com.github.thehilikus.dependency.analysis.core.PackageGraphCreator;
 import com.github.thehilikus.dependency.analysis.gui.MainPanel;
 import com.github.thehilikus.dependency.analysis.gui.controller.tasks.AbstractAnalyzerTask;
 import com.github.thehilikus.dependency.analysis.gui.controller.tasks.GraphCreationTask;
+import com.github.thehilikus.dependency.analysis.gui.controller.tasks.GraphOperationTask;
 import com.github.thehilikus.dependency.analysis.gui.controller.tasks.JavaSourceCodeSelectionTask;
+import com.github.thehilikus.dependency.analysis.operations.FindConnectedComponents;
 
 /**
  * A controller of user events of MainPanel
@@ -59,7 +61,7 @@ public class MainController implements UiController {
 	    PackageGraphCreator packageGraph = new PackageGraphCreator();
 	    graphTask = new GraphCreationTask("test", packageGraph, sourceCodeReader);
 	    graphTask.setOnSucceeded(event -> displayGraph(graphTask.getValue()));
-	    
+
 	    bindAndRunTask(graphTask);
 	} catch (Exception exc) {
 	    log.error("[createPackageGraphSession] There was a problem running a graph creation session: ", exc);
@@ -69,7 +71,7 @@ public class MainController implements UiController {
     }
 
     private void displayGraph(Graph newGraph) {
-	// TODO Auto-generated method stub
+	log.debug("[displayGraph] Displaying graph: " + newGraph);
     }
 
     private void cancelPreviousTask() {
@@ -106,8 +108,8 @@ public class MainController implements UiController {
 		.otherwise(Cursor.DEFAULT);
 	root.cursorProperty().bind(cursorBinding);
 
-	//TODO: unbind after done
-	
+	// TODO: unbind after done
+
 	log.debug("[bindAndRunTask] Finished binding {} to the UI, Ready to execute it", task);
 	executor.execute(task);
     }
@@ -134,5 +136,26 @@ public class MainController implements UiController {
 	    executor.shutdownNow();
 	}
 	executor.shutdownNow();
+    }
+
+    @FXML
+    private void createConnectedComponentsSession() {
+	if (graphTask == null) {
+	    mainPanel.reportError("Please create a graph first");
+	    return;
+	}
+
+	cancelPreviousTask();
+
+	try {
+	    FindConnectedComponents connectedComponentsFinder = new FindConnectedComponents();
+	    graphTask = new GraphOperationTask(graphTask.getValue(), connectedComponentsFinder);
+
+	    graphTask.setOnSucceeded(event -> displayGraph(graphTask.getValue()));
+	    bindAndRunTask(graphTask);
+	} catch (Exception exc) {
+	    log.error("[createPackageGraphSession] There was a problem running a graph operation session: ", exc);
+	    mainPanel.reportException("There was an error creating the graph", exc);
+	}
     }
 }
