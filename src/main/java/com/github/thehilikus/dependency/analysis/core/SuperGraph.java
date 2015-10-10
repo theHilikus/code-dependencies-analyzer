@@ -49,4 +49,13 @@ public class SuperGraph implements Graph {
     public List<? extends Graph> getSubgraphs() {
 	return subgraphs;
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+	return "SuperGraph [name=" + name + ", graphsCount=" + subgraphs.size() + "]";
+    }
+
 }
